@@ -84,9 +84,10 @@ python models\Wwiser_Python\wwiser.pyz
 
 ```
 python models\Scripts\rename.py datas\output\banks.txt datas\output\Extracted_WEM
+python models\Scripts\rename_wem.py datas\output\banks.txt datas\output\Extracted_WEM
 ```
 
-会给原始文件加上事件前缀、在bnk中的相对位置，即命名为`事件名_WEM-ID_WEM序号_BNK-ID.wem`
+会给原始文件加上事件前缀，即命名为`事件名_BNK-ID_WEM-ID.wem`
 
 *如果同一个 WEM-ID 在多个 bank 里重复出现，当前实现会保留最后解析到的那条记录
 
@@ -112,6 +113,27 @@ python models\Scripts\rename.py datas\output\banks.txt datas\output\Extracted_WE
 - 或者使用File→Add Folder打开文件夹
 
 找到想要修改的音频文件后，右键Properties（属性）→Details中查看General条目下的Duration、Sample rate、Bitrate、Channel（持续时间、采样率、比特率、声道）
+
+检查触发链：
+
+```
+python models\Scripts\trace_wem_event.py datas\output\banks.txt 99247340 --bank 5809be10
+```
+
+*我尝试替换的音频是镰刀特殊技第二段但丁的语音，这个语音会使用一个单声道wem(99247340) 和一个多声道wem(361484552) 叠加播放，并且作为随机事件以一定概率在游戏中被调用（……）
+
+触发链：
+
+```
+Event 1819967080
+└── Action 756004009 [Play]
+    └── Switch 910033169
+        └── State 361516992
+            └── Random/Shuffle 456884204（六选一）
+                └── Layer 966537895
+                    ├── WEM 361484552
+                    └── WEM 99247340
+```
 
 ### 生成替换wem文件
 
@@ -176,21 +198,6 @@ python models\Scripts\replace_wem_in_bnk.py datas\output\Modified_BNK\5809be10.b
 
 ```
 python models\Scripts\replace_wem_in_bnk.py datas\output\Extracted_BNK\5809be10.bnk datas\1.wem 99247340 datas\output\5809be10.bnk --dry-run
-```
-
-*这里例子中替换了两次，是因为我尝试替换的音频是但丁镰刀特殊技第二段但丁的语音，这个语音会使用一个单声道wem(99247340) 和一个多声道wem(361484552) 叠加播放，并且作为随机事件以一定概率在游戏中被调用（……）
-
-触发链：
-
-```
-Event 1819967080
-└── Action 756004009
-    └── Switch 910033169
-        └── State 361516992
-            └── Random/Shuffle 456884204（六选一）
-                └── Layer 966537895
-                    ├── WEM 361484552
-                    └── WEM 99247340
 ```
 
 > *不可行的方案：使用wwiseutil

@@ -1,0 +1,14 @@
+# DmC Devil May Cry .APK
+# script for QuickBMS http://quickbms.aluigi.org
+
+get FILES long
+get DUMMY long
+for i = 0 < FILES
+    get ID long
+    get OFFSET long
+    get SIZE long
+    set NAME ID
+    string NAME p= "%08x" NAME
+    string NAME += ".bnk"
+    log NAME OFFSET SIZE
+next i
